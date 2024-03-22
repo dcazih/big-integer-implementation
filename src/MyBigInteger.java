@@ -51,4 +51,16 @@ public class MyBigInteger {
         return null;
     }
 
+    public String toString(){
+        String output = "";
+        IntegerNode head = sign;
+        while (head != null){
+            output = head.digits + output;
+            if (head.higher_positions != null) head = head.higher_positions;
+            else break;
+        }
+
+        return (sign.digits == -1 ? "-" : "" ) + output;
+    }
+
 }
