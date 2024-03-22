@@ -12,6 +12,7 @@ public class MyBigInteger {
     }
 
     // == Head of Linked List ==
+    int numOfNodes = 1;
     IntegerNode sign;
 
     // === Constructors ===
@@ -49,6 +50,7 @@ public class MyBigInteger {
             if (i == 0) sign.higher_positions = newNode;
             else current.higher_positions = newNode;
             current = newNode; // update current node
+            numOfNodes++; // update number of nodes
         }
     }
     // Copy Constructor
@@ -81,6 +83,24 @@ public class MyBigInteger {
         }
 
         return (sign.digits == -1 ? "-" : "" ) + output;
+    }
+
+    public boolean equals(MyBigInteger num){
+        if (numOfNodes != num.numOfNodes) return false;
+
+        IntegerNode head1 = sign;
+        IntegerNode head2 = num.sign;
+        while(head1 != null && head2 != null){
+
+            // Check if digits match
+            if (head1.digits != head2.digits) return false;
+
+            // Move head pointers forward
+            head1 = head1.higher_positions;
+            head2 = head2.higher_positions;
+        }
+
+        return true;
     }
 
 }
