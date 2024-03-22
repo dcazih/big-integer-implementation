@@ -51,6 +51,18 @@ public class MyBigInteger {
             current = newNode; // update current node
         }
     }
+    // Copy Constructor
+    public MyBigInteger(MyBigInteger num){
+        // NULL for now
+    }
+    // Int Constructor
+    public MyBigInteger(int num){
+        this(String.valueOf(num));
+    }
+    // Long Constructor
+    public MyBigInteger(long num){
+        this(Long.toString(num));
+    }
 
     // === Methods ===
     // Performs the addition operation between two BigIntegers
