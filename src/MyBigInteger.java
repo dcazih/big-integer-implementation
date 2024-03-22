@@ -1,6 +1,6 @@
 public class MyBigInteger {
 
-    // === Linked Node Class ===
+    // == Linked Node Class ==
     class IntegerNode {
         int digits; // 4 digits in the current node
         IntegerNode higher_positions; // digits in the higher
@@ -73,7 +73,7 @@ public class MyBigInteger {
     // Outputs a string representation of MyBigIntegers
     public String toString(){
         String output = "";
-        IntegerNode head = sign;
+        IntegerNode head = sign.higher_positions;
         while (head != null){
             output = head.digits + output;
             if (head.higher_positions != null) head = head.higher_positions;
