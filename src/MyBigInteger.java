@@ -1,4 +1,6 @@
 public class MyBigInteger {
+
+    // === Linked Node Class ===
     class IntegerNode {
         int digits; // 4 digits in the current node
         IntegerNode higher_positions; // digits in the higher
@@ -9,8 +11,11 @@ public class MyBigInteger {
         }
     }
 
+    // == Head of Linked List ==
     IntegerNode sign;
 
+    // === Constructors ===
+    // String Constructor (Main Constructor)
     public MyBigInteger(String num){
 
         // Create first node
@@ -47,10 +52,13 @@ public class MyBigInteger {
         }
     }
 
+    // === Methods ===
+    // Performs the addition operation between two BigIntegers
     public static MyBigInteger add(MyBigInteger int1, MyBigInteger int2){
         return null;
     }
 
+    // Outputs a string representation of MyBigIntegers
     public String toString(){
         String output = "";
         IntegerNode head = sign;
