@@ -54,8 +54,9 @@ public class MyBigInteger {
         }
     }
     // Copy Constructor
-    public MyBigInteger(MyBigInteger num){
-        // NULL for now
+    public MyBigInteger(MyBigInteger num) throws CloneNotSupportedException {
+        sign = num.sign;
+        numOfNodes = num.numOfNodes;
     }
     // Int Constructor
     public MyBigInteger(int num){
@@ -64,6 +65,10 @@ public class MyBigInteger {
     // Long Constructor
     public MyBigInteger(long num){
         this(Long.toString(num));
+    }
+    // Empty Constructor
+    public MyBigInteger(){
+        sign = new IntegerNode(0);
     }
 
     // === Methods ===
@@ -102,5 +107,4 @@ public class MyBigInteger {
 
         return true;
     }
-
 }
