@@ -1,10 +1,11 @@
+import java.util.Stack;
+
 public class MyBigInteger {
 
     // == Linked Node Class ==
     static class IntegerNode {
         int digits; // 4 digits in the current node
         IntegerNode higher_positions; // digits in the higher
-
         public IntegerNode(int digits){
             this.digits = digits;
             higher_positions = null;
@@ -14,7 +15,6 @@ public class MyBigInteger {
     // == Head of Linked List ==
     int numOfNodes = 1;
     IntegerNode sign;
-
 
     // === Constructors ===
     // String Constructor (Main Constructor)
@@ -73,69 +73,76 @@ public class MyBigInteger {
     }
 
     // === Methods ===
-    // Performs the addition operation between two BigIntegers
+    // (Dmitri's Implementation) Performs the addition operation between two BigIntegers
     public static MyBigInteger add(MyBigInteger int1, MyBigInteger int2){
-
-        // Copy big integers for use
-        MyBigInteger int1Copy = new MyBigInteger(int1);
-        MyBigInteger int2Copy = new MyBigInteger(int2);
-        MyBigInteger sum = new MyBigInteger();
-
-        // Return recursive sum calculation
-        return add(int1Copy, int2Copy, sum, new IntegerNode(0), 0, 0, 0);
-
+        return add(new MyBigInteger(int1), new MyBigInteger(int2), new MyBigInteger(), new IntegerNode(0), int1.sign.digits, int2.sign.digits, 0, 0);
     }
-    private static MyBigInteger add(MyBigInteger int1, MyBigInteger int2, MyBigInteger sum, IntegerNode tempNode, int overflow, int underflow, int counter){
+    private static MyBigInteger add(MyBigInteger int1, MyBigInteger int2, MyBigInteger sum, IntegerNode tempNode, int int1sign, int int2sign, int overflow, int counter){
 
-        // Add digits from each node together accounting for over/underflow
-        int newNum = (int1.sign != null ? int1.sign.digits : 0 ) + (int2.sign != null ? int2.sign.digits : 0 ) + overflow - underflow;
+        int newNum = 0;
+
+        // If integers both negative change sign of sum to negative
+        if (counter == 0 && int1sign == -1 && int2sign == -1) sum.sign.digits = -1;
+
+        // If integers are negative, subtract them
+        else if (int1sign == -1 && int2sign == 0) return subtract(int1, int2);
+        else if (int1sign == 0 && int2sign == -1) return subtract(int1, int2);
+
+        // Else if integers both positive or both negative perform regular addition
+        else newNum = (int1.sign != null ? int1.sign.digits : 0 ) + (int2.sign != null ? int2.sign.digits : 0 ) + overflow;
 
         // Return condition
-        if (newNum == 0 && (int1.sign == null || int2.sign == null)) {
-            return sum;
-        }
+        if (newNum == 0 && (int1.sign == null && int2.sign == null)) return sum;
 
         // If newNum is longer than 4 digits calculate the overflow and underflow, then reassign newNum
         else if(newNum > 0 && String.valueOf(newNum).length() > 4){
-            
+
             // Calculate the overflow/underflow based on the length of newNum
             String numString = String.valueOf(newNum);
-            int flow = Integer.parseInt(numString.substring(0, numString.length()-4));
-            if (flow > 0) overflow = flow;
-            else underflow = flow;
+            overflow = Integer.parseInt(numString.substring(0, numString.length()-4));
 
             // If newNum contains leading zeros, remove them before converting back to int
             String digitsString = numString.substring(numString.length()-4);
             if (digitsString.charAt(0) == '0') {
                 for (int i = 0; i < digitsString.length(); i++) {
-                    if (digitsString.charAt(i) != '0') newNum = Integer.parseInt(digitsString.substring(i+1));
+                    if (digitsString.charAt(i) != '0') {
+                        newNum = Integer.parseInt(digitsString.substring(i));
+                        break;
+                    }
                 }
-            } else newNum = Integer.parseInt(digitsString); // else convert back to int
-
-        }
-        else { overflow = 0; underflow = 0; } // else reset flows for next recursive call
+            } else newNum = Integer.parseInt(digitsString); // else if no leading zeros, convert back to int
+        } else overflow = 0; // else reset flows for next recursive call
 
         // Assign a new node with digits = newNum to sum.next
         IntegerNode newNode = new IntegerNode(newNum);
-        if (counter == 0) sum.sign = newNode;
-        else tempNode.higher_positions = newNode;
-        tempNode = newNode; // update tempNode
+        if (counter != 0) {
+            if (counter == 1) sum.sign.higher_positions = newNode;
+            else tempNode.higher_positions = newNode;
+            tempNode = newNode; // update tempNode
+        }
 
-        // Break condition if both integers dont have higher positions and there is no over/underflow
-        try {if (overflow != 0 && int1.sign.higher_positions == null && int2.sign.higher_positions == null) return sum;}
-        catch (Exception ignored) {}
+        // Break condition if both integers don't have higher positions and there is no over/underflow
+        if ((int1.sign != null && int2.sign != null) && (int1.sign.higher_positions == null && int2.sign.higher_positions == null)) return sum;
 
         // Move current node forward if integer's current node not null
         if (int1.sign != null) int1.sign = int1.sign.higher_positions;
         if (int2.sign != null) int2.sign = int2.sign.higher_positions;
 
         // Recursively adds each pair of nodes
-        return add(int1, int2, sum, tempNode, overflow, underflow, counter + 1);
+        return add(int1, int2, sum, tempNode, int1sign, int2sign, overflow, counter + 1);
     }
+
+    // Other Additions Implementations Here:
+
+
+
+
+
 
     // Outputs a string representation of MyBigInteger
     public String toString(){
         String output = "";
+        String numSign = String.valueOf(sign.digits);
         IntegerNode head = sign.higher_positions; // temp node
         while (head != null){ // iterates through list
 
@@ -144,13 +151,14 @@ public class MyBigInteger {
             if (head.higher_positions != null && digitLength < 4) for (int i = 0; i < 4 - digitLength; i++) zeros += "0";
 
             // Add leading zeros and node's digits to output
-            output = zeros + head.digits + output;
+            output = zeros + Math.abs(head.digits) + output;
 
             // Update current temp node
             if (head.higher_positions != null) head = head.higher_positions;
             else break;
         }
-
+        //System.out.println(sign.digits);
+        //System.out.println(sign.digits == -1);
         // Return final output
         return (sign.digits == -1 ? "-" : "" ) + output;
     }
@@ -175,6 +183,39 @@ public class MyBigInteger {
             head2 = head2.higher_positions;
         }
 
+        return true;
+    }
+
+    public boolean greaterThanOrEqual(MyBigInteger num){
+
+        // if the length of 'this' is less than num, than false
+        if (numOfNodes < num.numOfNodes) return false;
+        else if (numOfNodes > num.numOfNodes) return true;
+        else {
+
+            // Temp nodes for iteration
+            IntegerNode head1 = sign;
+            IntegerNode head2 = num.sign;
+
+            Stack<IntegerNode> nodeStack1 = new Stack<>();
+            Stack<IntegerNode> nodeStack2 = new Stack<>();
+
+            // Iterate through integer's nodes adding them to stacks
+            while (head1 != null && head2 != null) {
+                nodeStack1.push(head1); // add to stack
+                nodeStack2.push(head2);
+                head1 = head1.higher_positions; // Move temp pointers forward
+                head2 = head2.higher_positions;
+            }
+
+            // Iterate through stacks comparing nodes digits, returns if > or
+            while(!nodeStack1.isEmpty()){
+                int digits1 = nodeStack1.pop().digits; int digits2 = nodeStack2.pop().digits;
+                if (digits1 > digits2) return true;
+                else if (digits1 < digits2) return false;
+            }
+
+        }
         return true;
     }
 }
