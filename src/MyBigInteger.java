@@ -237,13 +237,12 @@ public class MyBigInteger {
     @Override
     public String toString(){
         StringBuilder output = new StringBuilder();
-        String numSign = String.valueOf(sign.digits);
         IntegerNode head = sign.higher_positions; // temp node
         while (head != null){ // iterates through list
 
             // Calculates any leading zeros
             StringBuilder zeros = new StringBuilder(); int digitLength = String.valueOf(head.digits).length();
-            if (head.higher_positions != null && digitLength < 4) for (int i = 0; i < 4 - digitLength; i++) zeros.append("0");
+            if (head.higher_positions != null && digitLength < 4) zeros.append("0".repeat(4 - digitLength));
 
             // Add leading zeros and node's digits to output
             output.insert(0, zeros.toString() + Math.abs(head.digits));
