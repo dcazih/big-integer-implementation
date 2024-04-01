@@ -12,9 +12,10 @@ public class MyBigInteger {
         }
     }
 
-    // == Head of Linked List ==
-    int numOfNodes = 1;
+    // == Head of MyBigInteger's Linked List ==
     IntegerNode sign;
+    int numOfNodes = 1;
+
 
     // === Constructors ===
     // String Constructor (Main Constructor)
@@ -23,9 +24,13 @@ public class MyBigInteger {
         // Create first node
         sign = new IntegerNode(0);
 
-        // Additional Checks:
-        //if (num.isEmpty()){}
-        //else if (!num.isNumeric()){}
+        if (num.isEmpty()) return;
+
+        // Ensure string is numeric
+        try{ Integer.parseInt(num); }
+        catch (NumberFormatException e) {
+            System.out.println("ERROR!\nIllegalInputValueException: Enter numeric values only"); return;
+        }
 
         // Change sign if negative int
         if (num.charAt(0) == '-') {
@@ -35,9 +40,9 @@ public class MyBigInteger {
 
         // Traverse String num and add each section by 4's to sign
         // Ex: num = 24 2300 2345 -> add(2345) -> add(2300) -> add(24)
-        String partOfNum = "";
+        String partOfNum;
         IntegerNode current = null;
-        int breakCondition = (num.length() % 4 == 0) ? (num.length()/4) : (num.length()/4) + 1;
+        int breakCondition = (num.length() > 4) ? ((num.length() % 4 == 0) ? (num.length()/4) : (num.length()/4) + 1) : 1;
         for(int i = 0; i < breakCondition; i++){
 
             // Select 4 char long substring of num starting from end of string
@@ -78,20 +83,26 @@ public class MyBigInteger {
         return add(new MyBigInteger(int1), new MyBigInteger(int2), new MyBigInteger(), new IntegerNode(0), int1.sign.digits, int2.sign.digits, 0, 0);
     }
     private static MyBigInteger add(MyBigInteger int1, MyBigInteger int2, MyBigInteger sum, IntegerNode tempNode, int int1sign, int int2sign, int overflow, int counter){
-
         int newNum = 0;
 
         // If integers both negative change sign of sum to negative
         if (counter == 0 && int1sign == -1 && int2sign == -1) sum.sign.digits = -1;
 
         // If integers are negative, subtract them
-        else if (int1sign == -1 && int2sign == 0) return subtract(int1, int2);
-        else if (int1sign == 0 && int2sign == -1) return subtract(int1, int2);
+        else if (int1sign == -1 && int2sign == 0) {
+            int2.sign.digits = -1;
+            return subtract(int1, int2);
+        }
+        else if (int1sign == 0 && int2sign == -1) {
+            int2.sign.digits = 0;
+            return subtract(int1, int2);
+        }
 
+        // Main line for addition: int (positive) + int (positive) = int (positive)
         // Else if integers both positive or both negative perform regular addition
         else newNum = (int1.sign != null ? int1.sign.digits : 0 ) + (int2.sign != null ? int2.sign.digits : 0 ) + overflow;
 
-        // Return condition
+        // Return condition: if the end of both nums has been reached and no overflows are represent
         if (newNum == 0 && (int1.sign == null && int2.sign == null)) return sum;
 
         // If newNum is longer than 4 digits calculate the overflow and underflow, then reassign newNum
@@ -108,7 +119,7 @@ public class MyBigInteger {
                     if (digitsString.charAt(i) != '0') {
                         newNum = Integer.parseInt(digitsString.substring(i));
                         break;
-                    }
+                    } else if (i == digitsString.length() - 1) newNum = 0;
                 }
             } else newNum = Integer.parseInt(digitsString); // else if no leading zeros, convert back to int
         } else overflow = 0; // else reset flows for next recursive call
@@ -118,6 +129,7 @@ public class MyBigInteger {
         if (counter != 0) {
             if (counter == 1) sum.sign.higher_positions = newNode;
             else tempNode.higher_positions = newNode;
+            sum.numOfNodes++;
             tempNode = newNode; // update tempNode
         }
 
@@ -132,26 +144,109 @@ public class MyBigInteger {
         return add(int1, int2, sum, tempNode, int1sign, int2sign, overflow, counter + 1);
     }
 
-    // Other Additions Implementations Here:
+    // (Dmitri's Implementation) Performs the subtraction operation between two BigIntegers
+    public static MyBigInteger subtract(MyBigInteger int1, MyBigInteger int2){
+        return subtract(new MyBigInteger(int1), new MyBigInteger(int2), new MyBigInteger(), new IntegerNode(0), int1.sign.digits, int2.sign.digits, 0, 0);
+    }
+    private static MyBigInteger subtract(MyBigInteger int1, MyBigInteger int2, MyBigInteger difference, IntegerNode tempNode, int int1sign, int int2sign, int underflow, int counter){
+        if (int1sign == 0 && int2sign == -1) { // Ex: 100 - (-10) = 100 + 10
+            int2.sign.digits = 0; // convert int2 to positive
+            return add(int1, int2); // double negative cancels out, just add
+        }
+        else if (int1sign == -1 && int2sign == 0) { // Ex: -100 - 10 = -(100 + 10)
+            int2.sign.digits = -1; // convert int2 to negative
+            return add(int1, int2); // add two negatives
+        }
+        else if ((int1sign == -1 && int2sign == -1)) { // Ex: -10 - (-100) = 100 - 10
+            int1.sign.digits = 0; int2.sign.digits = 0; // convert to integers to positive
 
+            if (int1.lessThanOrEqual(int2)) difference = subtract(int2, int1); // swap order, subtract
+            else {
+                difference = subtract(int1, int2);
+                difference.sign.digits = -1; // convert positive difference to negative
+            }
+            return difference;
+        }
+        else if (int1.lessThanOrEqual(int2)){
+            difference = subtract(int2, int1); // swap order to larger num minus smaller num, then subtract
+            difference.sign.digits = -1;
+            return difference;
+        }
 
+        // Main subtraction line: num (larger) - num (smaller) = difference (positive)
+        else if (counter != 0){
 
+            // Converts current node's digits into string for condition checks (below)
+            StringBuilder int1digits = new StringBuilder(String.valueOf(int1.sign != null ? int1.sign.digits : 0));
+            while (int1digits.length() != 4) int1digits.insert(0, "0"); // adds extra zeros
 
+            StringBuilder int2digits = new StringBuilder(String.valueOf(int2.sign != null ? int2.sign.digits : 0));
+            while (int2digits.length() != 4) int2digits.insert(0, "0"); // Ex: 43 -> 0043
 
+            // Calculates the underflow for the next node based on digit condition checks
+            int nextUnderflow = 0;
+            if (int1.sign != null) {
+                 if (int1digits.toString().equals("0000") && !int2digits.toString().equals("0000")) {
+                    int1.sign.digits = 10000;
+                    nextUnderflow = 1;
+                }
+                else if (Integer.parseInt(int1digits.toString()) < Integer.parseInt(int2digits.toString()) && int1.sign.higher_positions != null){
+                    int1.sign.digits = Integer.parseInt( ("1" + int1digits.charAt(0)) + (int1digits.substring(1)) );
+                    nextUnderflow = 1;
+                }
+                else if (underflow != 0 && int1digits.toString().equals("0000")) {
+                    int1.sign.digits = 9999;
+                    underflow = 0;
+                    nextUnderflow = 1;
+                }
+            }
+
+            // Subtract node's digits from each other accounting for underflow
+            int newNum = (int1.sign != null ? int1.sign.digits : 0) - (int2.sign != null ? int2.sign.digits : 0) - underflow;
+            if (int1.sign != null) int1.sign.digits = Integer.parseInt(int1digits.toString());
+            if (int2.sign != null) int2.sign.digits = Integer.parseInt(int2digits.toString());
+
+            // Return condition: if the end of both nums has been reached and no underflows are represent
+            if (newNum == 0 && (int1.sign == null && int2.sign == null)) return difference;
+
+            // Assign a new node with digits = newNum to sum.next
+            IntegerNode newNode = new IntegerNode(newNum);
+            if (counter == 1) difference.sign.higher_positions = newNode;
+            else tempNode.higher_positions = newNode;
+            difference.numOfNodes++;
+            tempNode = newNode; // update tempNode
+
+            // Move current node forward if integer's current node not null
+            if (int1.sign != null) int1.sign = int1.sign.higher_positions;
+            if (int2.sign != null) int2.sign = int2.sign.higher_positions;
+
+            // Break condition if both integers don't have higher positions and there is no over/underflow
+            if ((int1.sign == null && int2.sign == null)) return difference;
+
+            // Recursively adds each pair of nodes
+            return subtract(int1, int2, difference, tempNode, int1sign, int2sign, nextUnderflow, counter + 1);
+        }
+
+        if (int1.sign != null) int1.sign = int1.sign.higher_positions;
+        if (int2.sign != null) int2.sign = int2.sign.higher_positions;
+
+        return subtract(int1, int2, difference, tempNode, int1sign, int2sign, underflow, counter + 1);
+    }
 
     // Outputs a string representation of MyBigInteger
+    @Override
     public String toString(){
-        String output = "";
+        StringBuilder output = new StringBuilder();
         String numSign = String.valueOf(sign.digits);
         IntegerNode head = sign.higher_positions; // temp node
         while (head != null){ // iterates through list
 
             // Calculates any leading zeros
-            String zeros = ""; int digitLength = String.valueOf(head.digits).length();
-            if (head.higher_positions != null && digitLength < 4) for (int i = 0; i < 4 - digitLength; i++) zeros += "0";
+            StringBuilder zeros = new StringBuilder(); int digitLength = String.valueOf(head.digits).length();
+            if (head.higher_positions != null && digitLength < 4) for (int i = 0; i < 4 - digitLength; i++) zeros.append("0");
 
             // Add leading zeros and node's digits to output
-            output = zeros + Math.abs(head.digits) + output;
+            output.insert(0, zeros.toString() + Math.abs(head.digits));
 
             // Update current temp node
             if (head.higher_positions != null) head = head.higher_positions;
@@ -162,7 +257,6 @@ public class MyBigInteger {
         // Return final output
         return (sign.digits == -1 ? "-" : "" ) + output;
     }
-
     public boolean equals(MyBigInteger num){
 
         // Break condition if integer lengths dont match
@@ -186,11 +280,11 @@ public class MyBigInteger {
         return true;
     }
 
-    public boolean greaterThanOrEqual(MyBigInteger num){
+    public boolean lessThanOrEqual(MyBigInteger num){
 
         // if the length of 'this' is less than num, than false
-        if (numOfNodes < num.numOfNodes) return false;
-        else if (numOfNodes > num.numOfNodes) return true;
+        if (numOfNodes < num.numOfNodes) return true;
+        else if (numOfNodes > num.numOfNodes) return false;
         else {
 
             // Temp nodes for iteration
@@ -211,11 +305,10 @@ public class MyBigInteger {
             // Iterate through stacks comparing nodes digits, returns if > or
             while(!nodeStack1.isEmpty()){
                 int digits1 = nodeStack1.pop().digits; int digits2 = nodeStack2.pop().digits;
-                if (digits1 > digits2) return true;
-                else if (digits1 < digits2) return false;
+                if (digits1 > digits2) return false;
+                else if (digits1 < digits2) return true;
             }
-
         }
-        return true;
+        return false;
     }
 }
