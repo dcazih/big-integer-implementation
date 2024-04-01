@@ -27,8 +27,7 @@ public class MyBigInteger {
         if (num.isEmpty()) return;
 
         // Ensure string is numeric
-        try{ Integer.parseInt(num); }
-        catch (NumberFormatException e) {
+        if (!isNumeric(num)){
             System.out.println("ERROR!\nIllegalInputValueException: Enter numeric values only"); return;
         }
 
@@ -78,6 +77,9 @@ public class MyBigInteger {
     }
 
     // === Methods ===
+    public boolean isNumeric(String s) {
+        return s != null && s.matches("[-+]?\\d*\\.?\\d+");
+    }
     // (Dmitri's Implementation) Performs the addition operation between two BigIntegers
     public static MyBigInteger add(MyBigInteger int1, MyBigInteger int2){
         return add(new MyBigInteger(int1), new MyBigInteger(int2), new MyBigInteger(), new IntegerNode(0), int1.sign.digits, int2.sign.digits, 0, 0);
