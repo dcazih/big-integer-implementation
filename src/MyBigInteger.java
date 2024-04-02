@@ -27,12 +27,13 @@ public class MyBigInteger {
         if (num.isEmpty()) return;
 
         // Ensure string is numeric
-        if (!isNumeric(num)){
-            System.out.println("ERROR!\nIllegalInputValueException: Enter numeric values only"); return;
+        else if (!isNumeric(num)){
+            System.out.println("ERROR!\nIllegalInputValueException: Enter numeric values only");
+            return;
         }
 
         // Change sign if negative int
-        if (num.charAt(0) == '-') {
+        else if (num.charAt(0) == '-') {
             sign.digits = -1;
             num = num.substring(1);
         }
@@ -238,23 +239,34 @@ public class MyBigInteger {
     // Outputs a string representation of MyBigInteger
     @Override
     public String toString(){
+        boolean leadingNumReached = false;
         StringBuilder output = new StringBuilder();
         IntegerNode head = sign.higher_positions; // temp node
         while (head != null){ // iterates through list
 
             // Calculates any leading zeros
-            StringBuilder zeros = new StringBuilder(); int digitLength = String.valueOf(head.digits).length();
+            StringBuilder zeros = new StringBuilder();
+            int digitLength = String.valueOf(head.digits).length();
             if (head.higher_positions != null && digitLength < 4) zeros.append("0".repeat(4 - digitLength));
 
-            // Add leading zeros and node's digits to output
+            // Add node's digits (along with leading zeros) to output
             output.insert(0, zeros.toString() + Math.abs(head.digits));
 
             // Update current temp node
             if (head.higher_positions != null) head = head.higher_positions;
             else break;
         }
-        //System.out.println(sign.digits);
-        //System.out.println(sign.digits == -1);
+
+        // Removes unnecessary leading zeros
+        if (output.charAt(0) == '0') {
+            for (int i = 0; i < output.length(); i++) {
+                if (output.charAt(i) != '0') {
+                    output = new StringBuilder(output.substring(i));
+                    break;
+                }
+            }
+        }
+
         // Return final output
         return (sign.digits == -1 ? "-" : "" ) + output;
     }
