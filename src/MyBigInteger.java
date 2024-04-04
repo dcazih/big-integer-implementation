@@ -47,7 +47,7 @@ public class MyBigInteger {
         if(todo == 0) todo = 4;
         
         // Chunk the input into 4-digit numbers
-        while(i + todo < num.length()) {
+        while(i < num.length()) {
             IntegerNode n = new IntegerNode(
                 Integer.parseInt(num.substring(i, i + todo))
             );
@@ -58,14 +58,6 @@ public class MyBigInteger {
             IntegerNode next = sign.higher_positions;
             sign.higher_positions = n;
             n.higher_positions = next;
-        }
-        // Add the remaining digits
-        if(i < num.length()) {
-            IntegerNode next = sign.higher_positions;
-            sign.higher_positions = new IntegerNode(
-                Integer.parseInt(num.substring(i))
-            );
-            sign.higher_positions.higher_positions = next;
         }
     }
     // Copy Constructor
