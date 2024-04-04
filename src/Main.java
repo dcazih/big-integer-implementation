@@ -1,7 +1,11 @@
 public class Main {
 
     public static void main(String[] args){
-
+        // Test 0
+        // Test toString
+        String num0 = "123456789";
+        System.out.printf("%s = %s\n", num0, new MyBigInteger(num0));
+        
         // Test 1
         // Proves algorithm's capability of taking in much longer numbers then given test cases.
         MyBigInteger num1 = new MyBigInteger("987293740836598436593649536495643953296594631596425654321");

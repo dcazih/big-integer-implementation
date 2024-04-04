@@ -43,18 +43,21 @@ public class MyBigInteger {
         }
         
         // Chunk the input into 4-digit numbers
-        IntegerNode cur = sign;
         for(; i + 4 < num.length(); i += 4) {
-            cur.higher_positions = new IntegerNode(
+            IntegerNode n = new IntegerNode(
                 Integer.parseInt(num.substring(i, i + 4))
             );
-            cur = cur.higher_positions;
+            IntegerNode next = sign.higher_positions;
+            sign.higher_positions = n;
+            n.higher_positions = next;
         }
         // Add the remaining digits
         if(i < num.length()) {
-            cur.higher_positions = new IntegerNode(
+            IntegerNode next = sign.higher_positions;
+            sign.higher_positions = new IntegerNode(
                 Integer.parseInt(num.substring(i))
             );
+            sign.higher_positions.higher_positions = next;
         }
     }
     // Copy Constructor
@@ -218,30 +221,10 @@ public class MyBigInteger {
     @Override
     public String toString(){
         StringBuilder output = new StringBuilder();
-        IntegerNode head = sign.higher_positions; // temp node
-        while (head != null){ // iterates through list
-
-            // Calculates any leading zeros
-            StringBuilder zeros = new StringBuilder();
-            int digitLength = String.valueOf(head.digits).length();
-            if (head.higher_positions != null && digitLength < 4) zeros.append("0".repeat(4 - digitLength));
-
-            // Add node's digits (along with leading zeros) to output
-            output.insert(0, zeros.toString() + Math.abs(head.digits));
-
-            // Update current temp node
-            if (head.higher_positions != null) head = head.higher_positions;
-            else break;
-        }
-
-        // Removes unnecessary leading zeros
-        if (output.charAt(0) == '0') {
-            for (int i = 0; i < output.length(); i++) {
-                if (output.charAt(i) != '0') {
-                    output = new StringBuilder(output.substring(i));
-                    break;
-                }
-            }
+        IntegerNode cur = sign.higher_positions;
+        while (cur != null){
+            output.insert(0, String.valueOf(cur.digits));
+            cur = cur.higher_positions;
         }
 
         // Return final output
