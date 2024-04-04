@@ -123,20 +123,20 @@ public class MyBigInteger {
         // Sum each digit group one by one until we run out
         while(node1 != null || node2 != null) {
             int digits1, digits2;
-            if (node1 != null) {
+            if (node1 == null) {
+                digits1 = 0;
+            }
+            else {
                 digits1 = node1.digits;
                 node1 = node1.higher_positions;
             }
-            else {
-                digits1 = 0;
-            }
             
-            if (node2 != null) {
+            if (node2 == null) {
+                digits2 = 0;
+            }
+            else {
                 digits2 = node2.digits;
                 node2 = node2.higher_positions;
-            }
-            else {
-                digits2 = 0;
             }
             
             int sum = digits1 + digits2 + carry;
@@ -196,8 +196,22 @@ public class MyBigInteger {
         
         // Subtract each digit group one by one until we run out
         while(node1 != null || node2 != null) {
-            int digits1 = node1 != null ? node1.digits : 0;
-            int digits2 = node2 != null ? node2.digits : 0;
+            int digits1, digits2;
+            if (node1 == null) {
+                digits1 = 0;
+            }
+            else {
+                digits1 = node1.digits;
+                node1 = node1.higher_positions;
+            }
+            
+            if(node2 == null) {
+                digits2 = 0;
+            }
+            else {
+                digits2 = node2.digits;
+                node2 = node2.higher_positions;
+            }
             
             int dif = digits1 - digits2 - borrow;
             // Test for borrow
