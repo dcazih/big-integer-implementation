@@ -115,6 +115,7 @@ public class MyBigInteger {
         if (int1sign == -1 && int2sign == -1) {
             intSum.sign.digits = -1;
         }
+        IntegerNode nodeSum = intSum.sign;
         IntegerNode node1 = int1.sign.higher_positions;
         IntegerNode node2 = int2.sign.higher_positions;
         int carry = 0;
@@ -148,13 +149,14 @@ public class MyBigInteger {
                 carry = 0;
             }
             
-            intSum.sign.higher_positions = new IntegerNode(sum);
+            nodeSum.higher_positions = new IntegerNode(sum);
+            nodeSum = nodeSum.higher_positions;
             ++intSum.numOfNodes;
         }
         
         // If there is a carry left over, add it to the sum
         if (carry == 1) {
-            intSum.sign.higher_positions = new IntegerNode(1);
+            nodeSum.higher_positions = new IntegerNode(1);
             ++intSum.numOfNodes;
         }
         
@@ -165,16 +167,18 @@ public class MyBigInteger {
         int int1sign = int1.sign.digits;
         int int2sign = int2.sign.digits;
         
-        // If integers are negative, add them
+        // -a - b = -(a + b)
         if (int1sign == -1 && int2sign == 0) {
+            // Add will take care of the sign of the sum
             int2.sign.digits = -1;
-            MyBigInteger intDif = subtract(int2, int1);
+            MyBigInteger intDif = add(int2, int1);
             int2.sign.digits = 0;
             return intDif;
         }
+        // a - (-b) = a + b
         if (int1sign == 0 && int2sign == -1) {
             int2.sign.digits = 0;
-            MyBigInteger intDif = subtract(int1, int2);
+            MyBigInteger intDif = add(int1, int2);
             int2.sign.digits = -1;
             return intDif;
         }
@@ -185,6 +189,7 @@ public class MyBigInteger {
             intDif.sign.digits = -1;
         }
         
+        IntegerNode nodeDif = intDif.sign;
         IntegerNode node1 = int1.sign.higher_positions;
         IntegerNode node2 = int2.sign.higher_positions;
         int borrow = 0;
@@ -204,13 +209,14 @@ public class MyBigInteger {
                 borrow = 0;
             }
             
-            intDif.sign.higher_positions = new IntegerNode(dif);
+            nodeDif.higher_positions = new IntegerNode(dif);
+            nodeDif = nodeDif.higher_positions;
             ++intDif.numOfNodes;
         }
         
         // If there is a borrow left over, subtract it from the sum
         if (borrow == 1) {
-            intDif.sign.higher_positions = new IntegerNode(1);
+            nodeDif.higher_positions = new IntegerNode(1);
             ++intDif.numOfNodes;
         }
         
@@ -222,8 +228,14 @@ public class MyBigInteger {
     public String toString(){
         StringBuilder output = new StringBuilder();
         IntegerNode cur = sign.higher_positions;
+        boolean trailing = false; // Only 0-pad trailing groups
         while (cur != null){
-            output.insert(0, String.valueOf(cur.digits));
+            String str = String.valueOf(cur.digits);
+            output.insert(0, str);
+            if(trailing) {
+                output.insert(0, "0".repeat(4 - str.length()));
+            }
+            trailing = true;
             cur = cur.higher_positions;
         }
 
