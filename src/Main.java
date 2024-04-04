@@ -4,7 +4,7 @@ public class Main {
         // Test 0
         // Test toString
         String num0 = "123456789";
-        System.out.printf("%s = %s\n", num0, new MyBigInteger(num0));
+        System.out.printf("'%s' = %s\n", num0, new MyBigInteger(num0));
         
         // Test 1
         // Proves algorithm's capability of taking in much longer numbers then given test cases.
@@ -13,12 +13,7 @@ public class Main {
         
         MyBigInteger sum1 = MyBigInteger.add(num1, num2);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num1, num2, sum1);
+        System.out.printf("%s + %s = %s\n(should be 12345678998729374083659843659364953649564395329659463159642565432198729374083659843659364953649564395329659463159642565432198729374083659843659364953649564395329659463159642565432297458749673196873187299072991287906593189263192851308642)\n\n", num1, num2, sum1);
 
         // Test 2 (from project description)
         MyBigInteger num3 = new MyBigInteger("18364000098463281009282");
@@ -26,12 +21,7 @@ public class Main {
 
         MyBigInteger sum2 = MyBigInteger.add(num3, num4);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num3, num4, sum2);
+        System.out.printf("%s + %s = %s\n(should be -9363997766741464995157547)\n\n", num3, num4, sum2);
 
         // Test 3 (from project description)
         MyBigInteger num5 = new MyBigInteger("839947462729219484028272");
@@ -39,12 +29,7 @@ public class Main {
 
         MyBigInteger sum3 = MyBigInteger.add(num5, num6);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num5, num6, sum3);
+        System.out.printf("%s + %s = %s\n(should be 272)\n\n", num5, num6, sum3);
 
         // Test 4 (from project description)
         MyBigInteger num7 = new MyBigInteger("-25634837829208474747382992822");
@@ -52,12 +37,7 @@ public class Main {
 
         MyBigInteger sum4 = MyBigInteger.add(num7, num8);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num7, num8, sum4);
+        System.out.printf("%s + %s = %s\n(should be -32017765463854958676666726705)\n\n", num7, num8, sum4);
 
         // Test 5
         // Proves algorithm's ability to take in smaller positive numbers
@@ -66,12 +46,7 @@ public class Main {
 
         MyBigInteger sum5 = MyBigInteger.add(num9, num10);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num9, num10, sum5);
+        System.out.printf("%s + %s = %s\n(should be 669702)\n\n", num9, num10, sum5);
 
         // Test 6
         // Proves algorithm's ability to take in smaller negative numbers
@@ -80,12 +55,7 @@ public class Main {
 
         MyBigInteger sum6 = MyBigInteger.add(num11, num12);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num11, num12, sum6);
+        System.out.printf("%s + %s = %s\n(should be -45656)\n\n", num11, num12, sum6);
 
         // Test 7
         // Proves algorithm's ability to take in a smaller positive and negative number
@@ -94,11 +64,6 @@ public class Main {
 
         MyBigInteger sum7 = MyBigInteger.add(num13, num14);
 
-        System.out.printf("""
-                %s
-                %s +
-                --------------
-                The sum is %s
-                """, num13, num14, sum7);
+        System.out.printf("%s + %s = %s\n(should be -115000)\n\n", num13, num14, sum7);
     }
 }
