@@ -42,11 +42,19 @@ public class MyBigInteger {
             throw new IllegalArgumentException("Invalid input");
         }
         
+        // First chunk may be less than 4 digits
+        int todo = (num.length() - i) % 4;
+        if(todo == 0) todo = 4;
+        
         // Chunk the input into 4-digit numbers
-        for(; i + 4 < num.length(); i += 4) {
+        while(i + todo < num.length()) {
             IntegerNode n = new IntegerNode(
-                Integer.parseInt(num.substring(i, i + 4))
+                Integer.parseInt(num.substring(i, i + todo))
             );
+            i += todo;
+            todo = 4;
+            // Reading big endian into little endian form, so we have to
+            //  insert the new node at the beginning of the list
             IntegerNode next = sign.higher_positions;
             sign.higher_positions = n;
             n.higher_positions = next;
@@ -222,20 +230,31 @@ public class MyBigInteger {
         
         return intDif;
     }
+    
+    // Raw output for testing
+    public String rawString() {
+        StringBuilder output = new StringBuilder();
+        IntegerNode cur = sign.higher_positions;
+        while (cur != null) {
+            output.append(String.format("%04d,", cur.digits));
+            cur = cur.higher_positions;
+        }
+        return (sign.digits == -1 ? "-" : "" ) + output;
+    }
 
     // Outputs a string representation of MyBigInteger
     @Override
     public String toString(){
         StringBuilder output = new StringBuilder();
         IntegerNode cur = sign.higher_positions;
-        boolean trailing = false; // Only 0-pad trailing groups
         while (cur != null){
-            String str = String.valueOf(cur.digits);
-            output.insert(0, str);
-            if(trailing) {
-                output.insert(0, "0".repeat(4 - str.length()));
+            // Only 0-pad trailing groups
+            if(cur.higher_positions != null) {
+                output.insert(0, String.format("%04d", cur.digits));
             }
-            trailing = true;
+            else {
+                output.insert(0, Integer.toString(cur.digits));
+            }
             cur = cur.higher_positions;
         }
 

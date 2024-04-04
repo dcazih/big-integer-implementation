@@ -13,16 +13,19 @@ public class Main {
         if (!num1.toString().equals(str1)) {
             System.out.println("FAIL: num1 not equal to str1");
             gotNeed(num1.toString(), str1);
+            System.out.printf("RAW: %s\n", num1.rawString());
             return false;
         }
         if (!num2.toString().equals(str2)) {
             System.out.println("FAIL: num2 not equal to str2");
             gotNeed(num2.toString(), str2);
+            System.out.printf("RAW: %s\n", num2.rawString());
             return false;
         }
         if (!sum.toString().equals(strSum)) {
             System.out.println("FAIL: sum not equal to strSum");
             gotNeed(sum.toString(), strSum);
+            System.out.printf("RAW: %s\n", sum.rawString());
             return false;
         }
         
@@ -71,7 +74,7 @@ public class Main {
             "75982",
             "669702"
         );
-
+        
         // Test 6
         // Proves algorithm's ability to take in smaller negative numbers
         sumTest(6,
