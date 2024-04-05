@@ -65,14 +65,14 @@ public class MyBigInteger {
         IntegerNode cur_other = other.sign.higher_positions;
         IntegerNode cur_self = new IntegerNode(other.sign.digits);
         
-        numOfNodes = 1;
+        sign = cur_self;
+        numOfNodes = other.numOfNodes;
         
         while(cur_other != null) {
             cur_self.higher_positions = new IntegerNode(cur_other.digits);
             
             cur_other = cur_other.higher_positions;
             cur_self = cur_self.higher_positions;
-            ++numOfNodes;
         }
     }
     // Int Constructor
